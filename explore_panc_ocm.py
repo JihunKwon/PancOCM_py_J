@@ -70,7 +70,8 @@ for fidx in range(0,np.size(rep_list)):
     # s=# of samples per trace
     # t=# of total traces
     s, t = np.shape(ocm)
-    
+
+    # ============================INITIAL CODES=====================================
     # filter the data
     offset = np.ones([s,t])  # offset correction
     hptr = np.ones([s,t])  # high pass filter
@@ -114,7 +115,15 @@ for fidx in range(0,np.size(rep_list)):
         fig.tight_layout()
         plt.savefig('Filtered_wave.png')
         # =============================================================================
-        
+
+
+    # ============================MY TEST ANALYSIS=====================================
+
+
+
+
+
+
     ocm = lptr_norm
     
     b = np.linspace(0,t-1,t)
