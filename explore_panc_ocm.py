@@ -71,7 +71,7 @@ for fidx in range(0,np.size(rep_list)):
     # t=# of total traces
     s, t = np.shape(ocm)
 
-    # ============================INITIAL CODES=====================================
+    # ============================1: INITIAL CODES=====================================
     # filter the data
     offset = np.ones([s,t])  # offset correction
     hptr = np.ones([s,t])  # high pass filter
@@ -80,7 +80,16 @@ for fidx in range(0,np.size(rep_list)):
     lptr_norm = np.ones([s,t])  # Normalized
     f1 = np.ones([5])
     f2 = np.ones([10])
+    max_p = 0
+
+    # My variables
+    offset_my = np.ones([s,t])  # offset correction
+    lptr_my = np.ones([s,t])  # low pass filter
+    lptr_env_my = np.ones([s,t])  # low pass filter
+    f1_my1 = np.ones([5])
+    f2_my = np.ones([10]) # Envelop
     for p in range(0,t):
+
         # high pass then low pass filter the data
         tr1 = ocm[:,p]
         offset = signal.detrend(tr1)
@@ -91,9 +100,13 @@ for fidx in range(0,np.size(rep_list)):
         # square and envelope detect
         lptr[:,p] = np.convolve(np.sqrt(np.square(tr3)),f2,'same')
         # normalize
-        lptr_norm[:,p] = np.divide(lptr[:,p],np.max(lptr[:,p]))
+        max_temp = np.max(lptr[:,p])
+        if max_p < max_temp:
+            max_p = max_temp
 
-        # =============================================================================
+        lptr_norm[:,p] = np.divide(lptr[:,p],np.max(lptr[:,p]))
+        '''
+        # ========================Visualize==============================================
         # This part shows how the signal changed after the filtering.
         depth = np.linspace(0, s - 1, s)
         fig = plt.figure(figsize=(12,8))
@@ -113,16 +126,45 @@ for fidx in range(0,np.size(rep_list)):
         ax2.set_title('Low pass and Envelop detect')
 
         fig.tight_layout()
-        plt.savefig('Filtered_wave.png')
+        plt.savefig('Filtered_wave_original.png')
         # =============================================================================
+        '''
 
+        '''
+        # ============================2: MY TEST ANALYSIS=====================================
+        # high pass then low pass filter the data
+        tr1 = ocm[:,p]
+        offset_my = signal.detrend(tr1)
+        lptr_my[:, p] = np.convolve(offset_my, f1_my1, 'same')
+        tr2 = lptr_my[:, p]
+        # square and envelope detect
+        lptr_env_my[:, p] = np.convolve(np.sqrt(np.square(tr2)), f2_my, 'same')
+        # Some kind of normalization here
+        lptr_norm[:,p] = np.divide(lptr_env_my[:,p],np.max(lptr_env_my[:,p]))
 
-    # ============================MY TEST ANALYSIS=====================================
+        
+        # ========================Visualize==============================================
+        # This part shows how the signal changed after the filtering.
+        depth = np.linspace(0, s - 1, s)
+        fig = plt.figure(figsize=(12,8))
 
+        ax0 = fig.add_subplot(311)
+        a0 = ax0.plot(depth,ocm[:,p])
+        a0off = ax0.plot(depth,offset_my[:])
+        ax0.set_title('Raw and Offset')
 
+        ax1 = fig.add_subplot(312)
+        a1 = ax1.plot(depth,lptr_my[:,p])
+        a2 = ax1.plot(depth,lptr_env_my[:,p])
+        ax1.set_title('Low pass 5 and Envelop detect')
 
+        fig.tight_layout()
+        plt.savefig('Filtered_wave_my.png')
+        # =============================================================================
+        '''
 
-
+#    for p in range(0,t):
+#        lptr_norm[:,p] = np.divide(lptr[:, p], max_p)
 
     ocm = lptr_norm
     
@@ -203,17 +245,14 @@ us_per_sample = 1/sample_rate_MHz
 #in cm
 little_t = np.linspace(2.3,6.2,s)
 
-
+'''
 fig, (ax1, ax2, ax3) = plt.subplots(3,1)
 ax1.plot(little_t, t2[:,1,6])
 ax2.plot(little_t, t2[:,1,7])
 ax3.plot(little_t, t2[:,1,8])
 ax2.set_ylabel("OCM Amplitude (a.u.)")
 ax3.set_xlabel("Depth (cm)")
-
-out1 = t2[:,1,6]
-out2 = t2[:,1,7]
-out3 = t2[:,1,8]
+'''
 
 '''Method 2: rm0 is only from fidx=0,3,6,9, which means signal from first-run (before water) is used for subtraction
 '''
@@ -233,7 +272,8 @@ for sub in range(0,num_subject):
             d1[bh,fidx] = np.mean(np.square(np.subtract(rm1,t1[:,bh,fidx])),0)
             d2[bh,fidx] = np.mean(np.square(np.subtract(rm2,t2[:,bh,fidx])),0)
             d3[bh,fidx] = np.mean(np.square(np.subtract(rm3,t3[:,bh,fidx])),0)
-  
+
+'''
 fig, (ax1, ax2, ax3, ax4) = plt.subplots(4,1)
 ax1.boxplot(d0)
 ax1.set_ylim(0,0.05)
@@ -244,12 +284,11 @@ ax3.set_ylim(0,0.05)
 ax4.boxplot(d3)
 ax4.set_ylim(0,0.05)
 
-
 sub1 = np.concatenate((d0[:,0:3],d1[:,0:3],d2[:,0:3]),0)
 fix, ax = plt.subplots()
 ax.boxplot(sub1)
 ax.set_ylabel("Mean Squared Error")
-
+'''
 out_txt = []
 
 #Jihun Local
@@ -258,10 +297,9 @@ out_txt.append("C:\\Users\\Kwon\\Documents\\Panc_OCM\\transducer1.txt")
 out_txt.append("C:\\Users\\Kwon\\Documents\\Panc_OCM\\transducer2.txt")
 out_txt.append("C:\\Users\\Kwon\\Documents\\Panc_OCM\\transducer3.txt")
 
-
 #np.savetxt(out_txt[2],d0,fmt='%0.04f',delimiter=' ',newline='\n')
 
-np.savetxt(out_txt[0],d0,fmt='%0.04f',delimiter=' ',newline='\n')
-np.savetxt(out_txt[1],d1,fmt='%0.04f',delimiter=' ',newline='\n')
-np.savetxt(out_txt[2],d2,fmt='%0.04f',delimiter=' ',newline='\n')
-np.savetxt(out_txt[3],d3,fmt='%0.04f',delimiter=' ',newline='\n')
+np.savetxt(out_txt[0],d0,fmt='%0.08f',delimiter=' ',newline='\n')
+np.savetxt(out_txt[1],d1,fmt='%0.08f',delimiter=' ',newline='\n')
+np.savetxt(out_txt[2],d2,fmt='%0.08f',delimiter=' ',newline='\n')
+np.savetxt(out_txt[3],d3,fmt='%0.08f',delimiter=' ',newline='\n')
