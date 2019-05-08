@@ -45,10 +45,10 @@ num_subject = 6  # This number has to be the number of total run (number of subj
 rep_list = [8196, 8196, 8196, 8192, 8192, 8192, 6932, 6932, 6932, 3690, 3690, 3690, 3401, 3401, 3401, 3690, 3690, 3690]# 3124 3401 3200
 
 # these store data for each transducer, 5 breath holds, 15 runs
-t0 = np.zeros([500,5,np.size(rep_list)])
-t1 = np.zeros([500,5,np.size(rep_list)])
-t2 = np.zeros([500,5,np.size(rep_list)])
-t3 = np.zeros([500,5,np.size(rep_list)])
+t0 = np.zeros([350,5,np.size(rep_list)])
+t1 = np.zeros([350,5,np.size(rep_list)])
+t2 = np.zeros([350,5,np.size(rep_list)])
+t3 = np.zeros([350,5,np.size(rep_list)])
 
 #stores mean squared difference
 d0 = np.zeros([5,np.size(rep_list)])
@@ -63,13 +63,14 @@ for fidx in range(0,np.size(rep_list)):
     
     
     #crop data
-    ocm = ocm[300:800,:] # Original code.
+    ocm = ocm[300:650,:] # Original code.
     #ocm = ocm[300+150:800,:] 
     #ocm = ocm[300:900,:] #600FOV
 
     # s=# of samples per trace
     # t=# of total traces
     s, t = np.shape(ocm)
+
 
     # ============================1: INITIAL CODES=====================================
     # filter the data
@@ -89,6 +90,7 @@ for fidx in range(0,np.size(rep_list)):
     f1_my1 = np.ones([5])
     f2_my = np.ones([10]) # Envelop
     for p in range(0,t):
+
 
         # high pass then low pass filter the data
         tr1 = ocm[:,p]
@@ -130,6 +132,7 @@ for fidx in range(0,np.size(rep_list)):
         # =============================================================================
         '''
 
+
         '''
         # ============================2: MY TEST ANALYSIS=====================================
         # high pass then low pass filter the data
@@ -142,7 +145,7 @@ for fidx in range(0,np.size(rep_list)):
         # Some kind of normalization here
         lptr_norm[:,p] = np.divide(lptr_env_my[:,p],np.max(lptr_env_my[:,p]))
 
-        
+
         # ========================Visualize==============================================
         # This part shows how the signal changed after the filtering.
         depth = np.linspace(0, s - 1, s)
@@ -162,6 +165,7 @@ for fidx in range(0,np.size(rep_list)):
         plt.savefig('Filtered_wave_my.png')
         # =============================================================================
         '''
+
 
 #    for p in range(0,t):
 #        lptr_norm[:,p] = np.divide(lptr[:, p], max_p)
@@ -203,27 +207,13 @@ for fidx in range(0,np.size(rep_list)):
 
 # =============================================================================
     '''
-    
-    
+
+
     #compute mean of the breath hold, there are 5 breath holds per run, 3 runs per subject
     ocm0m = np.ones([s,5])
     ocm1m = np.ones([s,5])
     ocm2m = np.ones([s,5])
     ocm3m = np.ones([s,5])
-    '''
-    for i in range(0,5): #First run includes some extra ocm signal
-        ocm0m[:,i] = np.mean(np.abs(ocm0[:,rep_list[fidx]*i:rep_list[fidx]*(i+1)]),1)
-        ocm1m[:,i] = np.mean(np.abs(ocm1[:,rep_list[fidx]*i:rep_list[fidx]*(i+1)]),1)
-        ocm2m[:,i] = np.mean(np.abs(ocm2[:,rep_list[fidx]*i:rep_list[fidx]*(i+1)]),1)
-        ocm3m[:,i] = np.mean(np.abs(ocm3[:,rep_list[fidx]*i:rep_list[fidx]*(i+1)]),1)
-    '''
-    '''
-    for i in range(0,5): #Distribute ocm signal from end to start
-        ocm0m[:,i] = np.mean(np.abs(ocm0[:,ocm0.shape[1]-rep_list[fidx]*i-1:ocm0.shape[1]-rep_list[fidx]*(i+1)-1]),1)
-        ocm1m[:,i] = np.mean(np.abs(ocm1[:,ocm1.shape[1]-rep_list[fidx]*i-1:ocm1.shape[1]-rep_list[fidx]*(i+1)-1]),1)
-        ocm2m[:,i] = np.mean(np.abs(ocm2[:,ocm2.shape[1]-rep_list[fidx]*i-1:ocm2.shape[1]-rep_list[fidx]*(i+1)-1]),1)
-        ocm3m[:,i] = np.mean(np.abs(ocm3[:,ocm3.shape[1]-rep_list[fidx]*i-1:ocm3.shape[1]-rep_list[fidx]*(i+1)-1]),1)
-    '''
     
     for i in range(0,5): #Distribute ocm signal from end to start
         ocm0m[:,i] = np.mean(np.abs(ocm0[:,ocm0.shape[1]-rep_list[fidx]*(i+1)-1:ocm0.shape[1]-rep_list[fidx]*i-1]),1)
