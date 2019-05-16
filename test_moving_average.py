@@ -31,10 +31,10 @@ num_subject = 6  # This number has to be the number of total run (number of subj
 rep_list = [8196, 8196, 8196, 8192, 8192, 8192, 6932, 6932, 6932, 3690, 3690, 3690, 3401, 3401, 3401, 3690, 3690, 3690]
 
 # these store data for each transducer, 5 breath holds, 15 runs
-t0 = np.zeros([300, 5, np.size(rep_list)])
-t1 = np.zeros([300, 5, np.size(rep_list)])
-t2 = np.zeros([300, 5, np.size(rep_list)])
-t3 = np.zeros([300, 5, np.size(rep_list)])
+t0 = np.zeros([350, 5, np.size(rep_list)])
+t1 = np.zeros([350, 5, np.size(rep_list)])
+t2 = np.zeros([350, 5, np.size(rep_list)])
+t3 = np.zeros([350, 5, np.size(rep_list)])
 
 # stores mean squared difference
 d0 = np.zeros([5, np.size(rep_list)])
@@ -48,7 +48,7 @@ for fidx in range(0, np.size(rep_list)):
     ocm = np.load(in_filename)
 
     # crop data
-    ocm = ocm[300:600, :]  # Original code.
+    ocm = ocm[300:650, :]  # Original code.
 
     # s=# of samples per trace
     # t=# of total traces
@@ -61,7 +61,7 @@ for fidx in range(0, np.size(rep_list)):
     lptr = np.ones([s, t])  # low pass filter
     lptra = np.ones([s, t])
     lptr_norm = np.ones([s, t])  # Normalized
-    f1 = np.ones([5])
+    f1 = np.ones([5]) #5
     f2 = np.ones([10])
     max_p = 0
 
@@ -113,7 +113,7 @@ for fidx in range(0, np.size(rep_list)):
     ocm2mov = np.zeros([s, c2])
 
     #Moving average
-    N = 5
+    N = 50
     for p in range(c0):
         #ocm0d[:,p] = signal.detrend(ocm0[:,p])
         #ocm1d[:,p] = signal.detrend(ocm1[:,p])
@@ -150,85 +150,86 @@ for fidx in range(0, np.size(rep_list)):
         fig = plt.figure(figsize=(20, 16))
 
         ax0 = fig.add_subplot(331)
-        a0 = ax0.plot(depth, t0[:, 0, fidx - 2], label="line 1")
-        a1 = ax0.plot(depth, t0[:, 1, fidx - 2], label="line 2")
-        a2 = ax0.plot(depth, t0[:, 2, fidx - 2], label="line 3")
-        a3 = ax0.plot(depth, t0[:, 3, fidx - 2], label="line 4")
-        a4 = ax0.plot(depth, t0[:, 4, fidx - 2], label="line 5")
+        a0 = ax0.plot(depth, t0[:, 0, fidx - 2], label="line 1", marker='+')
+        a1 = ax0.plot(depth, t0[:, 1, fidx - 2], label="line 2", marker='o')
+        a2 = ax0.plot(depth, t0[:, 2, fidx - 2], label="line 3", marker='s')
+        a3 = ax0.plot(depth, t0[:, 3, fidx - 2], label="line 4", marker='1')
+        a4 = ax0.plot(depth, t0[:, 4, fidx - 2], label="line 5", marker='*')
         ax0.set_title('OCM0, Before')
 
         ax1 = fig.add_subplot(332)
-        b0 = ax1.plot(depth, t1[:, 0, fidx - 2], label="line 1")
-        b1 = ax1.plot(depth, t1[:, 1, fidx - 2], label="line 2")
-        b2 = ax1.plot(depth, t1[:, 2, fidx - 2], label="line 3")
-        b3 = ax1.plot(depth, t1[:, 3, fidx - 2], label="line 4")
-        b4 = ax1.plot(depth, t1[:, 4, fidx - 2], label="line 5")
+        b0 = ax1.plot(depth, t1[:, 0, fidx - 2], label="line 1", marker='+')
+        b1 = ax1.plot(depth, t1[:, 1, fidx - 2], label="line 2", marker='o')
+        b2 = ax1.plot(depth, t1[:, 2, fidx - 2], label="line 3", marker='s')
+        b3 = ax1.plot(depth, t1[:, 3, fidx - 2], label="line 4", marker='1')
+        b4 = ax1.plot(depth, t1[:, 4, fidx - 2], label="line 5", marker='*')
         ax1.set_title('OCM1, Before')
 
         ax2 = fig.add_subplot(333)
-        c0 = ax2.plot(depth, t2[:, 0, fidx - 2], label="line 1")
-        c1 = ax2.plot(depth, t2[:, 1, fidx - 2], label="line 2")
-        c2 = ax2.plot(depth, t2[:, 2, fidx - 2], label="line 3")
-        c3 = ax2.plot(depth, t2[:, 3, fidx - 2], label="line 4")
-        c4 = ax2.plot(depth, t2[:, 4, fidx - 2], label="line 5")
+        c0 = ax2.plot(depth, t2[:, 0, fidx - 2], label="line 1", marker='+')
+        c1 = ax2.plot(depth, t2[:, 1, fidx - 2], label="line 2", marker='o')
+        c2 = ax2.plot(depth, t2[:, 2, fidx - 2], label="line 3", marker='s')
+        c3 = ax2.plot(depth, t2[:, 3, fidx - 2], label="line 4", marker='1')
+        c4 = ax2.plot(depth, t2[:, 4, fidx - 2], label="line 5", marker='*')
         ax2.set_title('OCM2, Before')
 
         # After
         ax0 = fig.add_subplot(334)
-        a0 = ax0.plot(depth, t0[:, 0, fidx - 1], label="line 6")
-        a1 = ax0.plot(depth, t0[:, 1, fidx - 1], label="line 7")
-        a2 = ax0.plot(depth, t0[:, 2, fidx - 1], label="line 8")
-        a3 = ax0.plot(depth, t0[:, 3, fidx - 1], label="line 9")
-        a4 = ax0.plot(depth, t0[:, 4, fidx - 1], label="line 10")
+        a0 = ax0.plot(depth, t0[:, 0, fidx - 1], label="line 6", marker='+')
+        a1 = ax0.plot(depth, t0[:, 1, fidx - 1], label="line 7", marker='o')
+        a2 = ax0.plot(depth, t0[:, 2, fidx - 1], label="line 8", marker='s')
+        a3 = ax0.plot(depth, t0[:, 3, fidx - 1], label="line 9", marker='1')
+        a4 = ax0.plot(depth, t0[:, 4, fidx - 1], label="line 10", marker='*')
         ax0.set_title('OCM0, After')
 
         ax1 = fig.add_subplot(335)
-        b0 = ax1.plot(depth, t1[:, 0, fidx - 1], label="line 6")
-        b1 = ax1.plot(depth, t1[:, 1, fidx - 1], label="line 7")
-        b2 = ax1.plot(depth, t1[:, 2, fidx - 1], label="line 8")
-        b3 = ax1.plot(depth, t1[:, 3, fidx - 1], label="line 9")
-        b4 = ax1.plot(depth, t1[:, 4, fidx - 1], label="line 10")
+        b0 = ax1.plot(depth, t1[:, 0, fidx - 1], label="line 6", marker='+')
+        b1 = ax1.plot(depth, t1[:, 1, fidx - 1], label="line 7", marker='o')
+        b2 = ax1.plot(depth, t1[:, 2, fidx - 1], label="line 8", marker='s')
+        b3 = ax1.plot(depth, t1[:, 3, fidx - 1], label="line 9", marker='1')
+        b4 = ax1.plot(depth, t1[:, 4, fidx - 1], label="line 10", marker='*')
         ax1.set_title('OCM1, After')
 
         ax2 = fig.add_subplot(336)
-        c0 = ax2.plot(depth, t2[:, 0, fidx - 1], label="line 6")
-        c1 = ax2.plot(depth, t2[:, 1, fidx - 1], label="line 7")
-        c2 = ax2.plot(depth, t2[:, 2, fidx - 1], label="line 8")
-        c3 = ax2.plot(depth, t2[:, 3, fidx - 1], label="line 9")
-        c4 = ax2.plot(depth, t2[:, 4, fidx - 1], label="line 10")
+        c0 = ax2.plot(depth, t2[:, 0, fidx - 1], label="line 6", marker='+')
+        c1 = ax2.plot(depth, t2[:, 1, fidx - 1], label="line 7", marker='o')
+        c2 = ax2.plot(depth, t2[:, 2, fidx - 1], label="line 8", marker='s')
+        c3 = ax2.plot(depth, t2[:, 3, fidx - 1], label="line 9", marker='1')
+        c4 = ax2.plot(depth, t2[:, 4, fidx - 1], label="line 10", marker='*')
         ax2.set_title('OCM2, After')
 
         # 10 min
         ax0 = fig.add_subplot(337)
-        a0 = ax0.plot(depth, t0[:, 0, fidx], label="line 11")
-        a1 = ax0.plot(depth, t0[:, 1, fidx], label="line 12")
-        a2 = ax0.plot(depth, t0[:, 2, fidx], label="line 13")
-        a3 = ax0.plot(depth, t0[:, 3, fidx], label="line 14")
-        a4 = ax0.plot(depth, t0[:, 4, fidx], label="line 15")
+        a0 = ax0.plot(depth, t0[:, 0, fidx], label="line 11", marker='+')
+        a1 = ax0.plot(depth, t0[:, 1, fidx], label="line 12", marker='o')
+        a2 = ax0.plot(depth, t0[:, 2, fidx], label="line 13", marker='s')
+        a3 = ax0.plot(depth, t0[:, 3, fidx], label="line 14", marker='1')
+        a4 = ax0.plot(depth, t0[:, 4, fidx], label="line 15", marker='*')
         ax0.set_title('OCM0, 10min')
 
         ax1 = fig.add_subplot(338)
-        b0 = ax1.plot(depth, t1[:, 0, fidx], label="line 11")
-        b1 = ax1.plot(depth, t1[:, 1, fidx], label="line 12")
-        b2 = ax1.plot(depth, t1[:, 2, fidx], label="line 13")
-        b3 = ax1.plot(depth, t1[:, 3, fidx], label="line 14")
-        b4 = ax1.plot(depth, t1[:, 4, fidx], label="line 15")
+        b0 = ax1.plot(depth, t1[:, 0, fidx], label="line 11", marker='+')
+        b1 = ax1.plot(depth, t1[:, 1, fidx], label="line 12", marker='o')
+        b2 = ax1.plot(depth, t1[:, 2, fidx], label="line 13", marker='s')
+        b3 = ax1.plot(depth, t1[:, 3, fidx], label="line 14", marker='1')
+        b4 = ax1.plot(depth, t1[:, 4, fidx], label="line 15", marker='*')
         ax1.set_title('OCM1, 10min')
 
         ax2 = fig.add_subplot(339)
-        c0 = ax2.plot(depth, t2[:, 0, fidx], label="line 11")
-        c1 = ax2.plot(depth, t2[:, 1, fidx], label="line 12")
-        c2 = ax2.plot(depth, t2[:, 2, fidx], label="line 13")
-        c3 = ax2.plot(depth, t2[:, 3, fidx], label="line 14")
-        c4 = ax2.plot(depth, t2[:, 4, fidx], label="line 15")
+        c0 = ax2.plot(depth, t2[:, 0, fidx], label="line 11", marker='+')
+        c1 = ax2.plot(depth, t2[:, 1, fidx], label="line 12", marker='o')
+        c2 = ax2.plot(depth, t2[:, 2, fidx], label="line 13", marker='s')
+        c3 = ax2.plot(depth, t2[:, 3, fidx], label="line 14", marker='1')
+        c4 = ax2.plot(depth, t2[:, 4, fidx], label="line 15", marker='*')
         ax2.set_title('OCM2, 10min')
 
         fig.tight_layout()
         plt.savefig('t012_{fidx}_MA.png'.format(fidx=fidx))
 
+
+
 '''Method 2: rm0 is only from fidx=0,3,6,9, which means signal from first-run (before water) is used for subtraction
 '''
-
 # loop through subjects
 for sub in range(0, num_subject):
     # mean for this run across all breath holds
