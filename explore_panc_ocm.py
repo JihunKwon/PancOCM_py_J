@@ -249,7 +249,7 @@ ax3.set_xlabel("Depth (cm)")
 #loop through subjects
 for sub in range(0,num_subject):
     #mean for this run across all breath holds
-    rm0 = np.mean(t0[:,:,sub*3],1)
+    rm0 = np.mean(t0[:,:,sub*3],1) #"sub*3" here means that rm0 is calculated from "before water" phase.
     rm1 = np.mean(t1[:,:,sub*3],1)
     rm2 = np.mean(t2[:,:,sub*3],1)
     rm3 = np.mean(t3[:,:,sub*3],1)
