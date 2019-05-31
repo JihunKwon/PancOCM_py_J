@@ -1,7 +1,6 @@
 '''
 This code analyzes the OCM waves, and calculates weighting factor by gradient descent (ascend) method
 '''
-
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
@@ -157,7 +156,7 @@ def main():
 
     ######################## Step A optimization (separate to two segments) ########################
     l_2 = int(np.size(t0,0)/2)
-    sub_sq = np.zeros((3,4))
+    sub_sq_A = np.zeros((3,4))
     pos_history_A = np.zeros((3,2))
     w_a1 = [0,0,0]
     w_a2 = [0,0,0]
@@ -178,23 +177,23 @@ def main():
     fig0 = plt.figure(figsize=(15, 5))
 
     for ocm in range(3):
-        sub_sq[ocm][:] = get_sq_diff_A(f_bef[ocm][:], f_aft[ocm][:], f_10m[ocm][:], l_2)
+        sub_sq_A[ocm][:] = get_sq_diff_A(f_bef[ocm][:], f_aft[ocm][:], f_10m[ocm][:], l_2)
         draw_raw(fig0, f_bef[ocm][:], f_aft[ocm][:], f_10m[ocm][:], d, ocm)
 
     # 収束する様子を表示するためのグラフ
     fig2 = plt.figure(figsize=(15,5))
-    learning_rates = [0.0001]
+    learning_rates = [0.00005]
 
     for i, learning_rate in enumerate(learning_rates):
-        ans, pos_history_A_0 = gradient_descent_method(gradient_f1, (0.1, 0.1), learning_rate, sub_sq[0])  # OCM0
-        ans, pos_history_A_1 = gradient_descent_method(gradient_f1, (0.1, 0.1), learning_rate, sub_sq[1])  # OCM1
-        ans, pos_history_A_2 = gradient_descent_method(gradient_f1, (0.1, 0.1), learning_rate, sub_sq[2])  # OCM2
+        ans, pos_history_A_0 = gradient_descent_method(gradient_f1, (0.1, 0.1), learning_rate, sub_sq_A[0])  # OCM0
+        ans, pos_history_A_1 = gradient_descent_method(gradient_f1, (0.1, 0.1), learning_rate, sub_sq_A[1])  # OCM1
+        ans, pos_history_A_2 = gradient_descent_method(gradient_f1, (0.1, 0.1), learning_rate, sub_sq_A[2])  # OCM2
 
         ### 2D Plot ###
         ## OCM0
         ocm = 0
         ax = plt.subplot(1,3,ocm+1)
-        draw_contour(ax, sub_sq[ocm])
+        draw_contour(ax, sub_sq_A[ocm])
         ax.set_title("OCM"+ str(ocm) + ", learning rate: " + str(learning_rate) + ", iteration: " + str(len(pos_history_A)))
         # Show points
         for pos in pos_history_A_0:
@@ -216,7 +215,7 @@ def main():
         ## OCM1
         ocm = 1
         ax = plt.subplot(1,3,ocm+1)
-        draw_contour(ax, sub_sq[ocm])
+        draw_contour(ax, sub_sq_A[ocm])
         ax.set_title("OCM"+ str(ocm) + ", learning rate: " + str(learning_rate) + ", iteration: " + str(len(pos_history_A)))
         # Show points
         for pos in pos_history_A_1:
@@ -238,7 +237,7 @@ def main():
         ## OCM2
         ocm = 2
         ax = plt.subplot(1,3,ocm+1)
-        draw_contour(ax, sub_sq[ocm])
+        draw_contour(ax, sub_sq_A[ocm])
         ax.set_title("OCM"+ str(ocm) + ", learning rate: " + str(learning_rate) + ", iteration: " + str(len(pos_history_A)))
         # Show points
         for pos in pos_history_A_2:
@@ -271,7 +270,7 @@ def main():
     fig2.tight_layout()
 
     # 画像を表示
-    #plt.show()
+    plt.show()
 
     # 画像を保存
     fig0.savefig('raw_signal.png')
@@ -279,77 +278,175 @@ def main():
 
     ######################## Step B optimization (separate to two more segments) ########################
     l_4 = int(np.size(t0,0)/4)
-    sub_sq_B1 = get_sq_diff_B1(f0_bef, f0_aft, f0_10m, l_4)  # squared diff of segment 1 (first segment of step1)
-    sub_sq_B2 = get_sq_diff_B2(f0_bef, f0_aft, f0_10m, l_4)  # squared diff of segment 2 (second segment of step1)
-    fig4 = plt.figure(figsize=(14, 6)) # Graph to draw convergence
+    sub_sq_B1 = np.zeros((3,4))
+    sub_sq_B2 = np.zeros((3,4))
+    pos_history_B1 = np.zeros((3,2))
+    pos_history_B2 = np.zeros((3,2))
+    w_b1_1 = [0,0,0]
+    w_b1_2 = [0,0,0]
+    w_b2_1 = [0,0,0]
+    w_b2_2 = [0,0,0]
+
+    for ocm in range(3):
+        sub_sq_B1[ocm][:] = get_sq_diff_B1(f_bef[ocm][:], f_aft[ocm][:], f_10m[ocm][:], l_4)
+        sub_sq_B2[ocm][:] = get_sq_diff_B2(f_bef[ocm][:], f_aft[ocm][:], f_10m[ocm][:], l_4)
+
+    fig4 = plt.figure(figsize=(15, 5)) # Graph to draw convergence
 
     for i, learning_rate in enumerate(learning_rates):
-        ans, pos_history_B1 = gradient_descent_method(gradient_f1, (0.1, 0.1), learning_rate, sub_sq_B1)
-        ans, pos_history_B2 = gradient_descent_method(gradient_f1, (0.1, 0.1), learning_rate, sub_sq_B2)
+        ans, pos_history_B1_0 = gradient_descent_method(gradient_f1, (0.1, 0.1), learning_rate, sub_sq_B1[0])
+        ans, pos_history_B1_1 = gradient_descent_method(gradient_f1, (0.1, 0.1), learning_rate, sub_sq_B1[1])
+        ans, pos_history_B1_2 = gradient_descent_method(gradient_f1, (0.1, 0.1), learning_rate, sub_sq_B1[2])
+        ans, pos_history_B2_0 = gradient_descent_method(gradient_f1, (0.1, 0.1), learning_rate, sub_sq_B2[0])
+        ans, pos_history_B2_1 = gradient_descent_method(gradient_f1, (0.1, 0.1), learning_rate, sub_sq_B2[1])
+        ans, pos_history_B2_2 = gradient_descent_method(gradient_f1, (0.1, 0.1), learning_rate, sub_sq_B2[2])
 
         ### 2D Plot ###
-        # Draw pos_history_B1
-        ax = plt.subplot(1, 2, 1)  # Plot pos_history_B1
-        draw_contour(ax, sub_sq_B1)
-        ax.set_title("Segment1, learning rate: " + str(learning_rate) + ", iteration: " + str(len(pos_history_B1)))
-        # Show moved points
-        for posB1 in pos_history_B1:
+        ## OCM0, 1st Segment
+        ocm = 0
+        ax = plt.subplot(2,3,ocm+1)
+        draw_contour(ax, sub_sq_B1[ocm])
+        ax.set_title("OCM"+ str(ocm) + ", learning rate: " + str(learning_rate) + ", iteration: " + str(len(pos_history_B1)))
+        # Show points
+        for posB1 in pos_history_B1_0:
             if is_valid(posB1[0]) and is_valid(posB1[1]):
                 ax.plot(posB1[0], posB1[1], 'o')
-        # Connect points with line
-        for i in range(len(pos_history_B1) - 1):
-            x1 = pos_history_B1[i][0]
-            y1 = pos_history_B1[i][1]
-            x2 = pos_history_B1[i + 1][0]
-            y2 = pos_history_B1[i + 1][1]
+        # Connect points with lines
+        for i in range(len(pos_history_B1_0) - 1):
+            x1 = pos_history_B1_0[i][0]
+            y1 = pos_history_B1_0[i][1]
+            x2 = pos_history_B1_0[i + 1][0]
+            y2 = pos_history_B1_0[i + 1][1]
             if all([is_valid(v) for v in [x1, y1, x2, y2]]):
                 ax.plot([x1, x2], [y1, y2], linestyle='-', linewidth=2)
 
-
-        # Draw pos_history_B2
-        ax = plt.subplot(1, 2, 2)  # Plot pos_history_B2
-        draw_contour(ax, sub_sq_B2)
-        ax.set_title("Segment2, learning rate: " + str(learning_rate) + ", iteration: " + str(len(pos_history_B2)))
-        # Show moved points
-        for posB2 in pos_history_B2:
+        ## OCM0, 2nd Segment
+        ax = plt.subplot(2,3,ocm+4)
+        draw_contour(ax, sub_sq_B2[ocm])
+        ax.set_title("OCM"+ str(ocm) + ", learning rate: " + str(learning_rate) + ", iteration: " + str(len(pos_history_B2)))
+        # Show points
+        for posB2 in pos_history_B2_0:
             if is_valid(posB2[0]) and is_valid(posB2[1]):
                 ax.plot(posB2[0], posB2[1], 'o')
-        # Connect points with line
-        for i in range(len(pos_history_B2) - 1):
-            x1 = pos_history_B2[i][0]
-            y1 = pos_history_B2[i][1]
-            x2 = pos_history_B2[i + 1][0]
-            y2 = pos_history_B2[i + 1][1]
+        # Connect points with lines
+        for i in range(len(pos_history_B2_0) - 1):
+            x1 = pos_history_B2_0[i][0]
+            y1 = pos_history_B2_0[i][1]
+            x2 = pos_history_B2_0[i + 1][0]
+            y2 = pos_history_B2_0[i + 1][1]
             if all([is_valid(v) for v in [x1, y1, x2, y2]]):
                 ax.plot([x1, x2], [y1, y2], linestyle='-', linewidth=2)
 
-        ### 3D Plot ###
-        fig3d = plt.figure(figsize=(14, 6))
-        ax2 = fig3d.add_subplot(121, projection='3d')
-        draw_3D(ax2, sub_sq_B1)
-        for i in range(len(pos_history_B1)):
-            ax2.scatter(pos_history_B1[i][0],pos_history_B1[i][1],f1(pos_history_B1[i][0],pos_history_B1[i][1],sub_sq_B1), s = 5, color = "red", zorder = 1)
+        # Save last point
+        w_b1_1[ocm] = posB1[0] * w_a1[ocm]
+        w_b1_2[ocm] = posB1[1] * w_a1[ocm]
+        w_b2_1[ocm] = posB2[0] * w_a2[ocm]
+        w_b2_2[ocm] = posB2[1] * w_a2[ocm]
+        print("OCM"+str(ocm)+": w_b1_1 = {:.4f}, w_b1_2 = {:.4f}, w_b2_1 = {:.4f}, w_b2_2 = {:.4f}, All = {:.4f}"
+              .format(w_b1_1[ocm], w_b1_2[ocm], w_b2_1[ocm], w_b2_2[ocm], w_b1_1[ocm]+w_b1_2[ocm]+w_b2_1[ocm]+w_b2_2[ocm]))
 
-        ax2_ = fig3d.add_subplot(122, projection='3d')
-        draw_3D(ax2_, sub_sq_B2)
-        for i in range(len(pos_history_B2)):
-            ax2_.scatter(pos_history_B2[i][0],pos_history_B2[i][1],f1(pos_history_B2[i][0],pos_history_B2[i][1],sub_sq_B2), s = 5, color = "red", zorder = 1)
 
-    # タイトルが重ならないようにする
-    fig4.tight_layout()
 
-    # 画像を表示
-    plt.show()
 
-    # 画像を保存
-    fig4.savefig('2d-result_step2.png')
+        ## OCM1, 1st Segment
+        ocm = 1
+        ax = plt.subplot(2,3,ocm+1)
+        draw_contour(ax, sub_sq_B1[ocm])
+        ax.set_title("OCM"+ str(ocm) + ", learning rate: " + str(learning_rate) + ", iteration: " + str(len(pos_history_B1)))
+        # Show points
+        for posB1 in pos_history_B1_1:
+            if is_valid(posB1[0]) and is_valid(posB1[1]):
+                ax.plot(posB1[0], posB1[1], 'o')
+        # Connect points with lines
+        for i in range(len(pos_history_B1_1) - 1):
+            x1 = pos_history_B1_1[i][0]
+            y1 = pos_history_B1_1[i][1]
+            x2 = pos_history_B1_1[i + 1][0]
+            y2 = pos_history_B1_1[i + 1][1]
+            if all([is_valid(v) for v in [x1, y1, x2, y2]]):
+                ax.plot([x1, x2], [y1, y2], linestyle='-', linewidth=2)
 
-    w1_1 = posB1[0] * w1
-    w1_2 = posB1[1] * w1
-    w2_1 = posB2[0] * w2
-    w2_2 = posB2[1] * w2
-    print("w1={:.4f}, w2={:.4f}, w1_1={:.4f}, w1_2={:.4f}, w2_1={:.4f}, w2_2={:.4f}, total={:.4f}"
-          .format(w1, w2, w1_1, w1_2, w2_1, w2_2, w1_1+w1_2+w2_1+w2_2))
+        ## OCM1, 2nd Segment
+        ax = plt.subplot(2,3,ocm+4)
+        draw_contour(ax, sub_sq_B2[ocm])
+        ax.set_title("OCM"+ str(ocm) + ", learning rate: " + str(learning_rate) + ", iteration: " + str(len(pos_history_B2)))
+        # Show points
+        for posB2 in pos_history_B2_1:
+            if is_valid(posB2[0]) and is_valid(posB2[1]):
+                ax.plot(posB2[0], posB2[1], 'o')
+        # Connect points with lines
+        for i in range(len(pos_history_B2_1) - 1):
+            x1 = pos_history_B2_1[i][0]
+            y1 = pos_history_B2_1[i][1]
+            x2 = pos_history_B2_1[i + 1][0]
+            y2 = pos_history_B2_1[i + 1][1]
+            if all([is_valid(v) for v in [x1, y1, x2, y2]]):
+                ax.plot([x1, x2], [y1, y2], linestyle='-', linewidth=2)
+
+        # Save last point
+        w_b1_1[ocm] = posB1[0] * w_a1[ocm]
+        w_b1_2[ocm] = posB1[1] * w_a1[ocm]
+        w_b2_1[ocm] = posB2[0] * w_a2[ocm]
+        w_b2_2[ocm] = posB2[1] * w_a2[ocm]
+        print("OCM"+str(ocm)+": w_b1_1 = {:.4f}, w_b1_2 = {:.4f}, w_b2_1 = {:.4f}, w_b2_2 = {:.4f}, All = {:.4f}"
+              .format(w_b1_1[ocm], w_b1_2[ocm], w_b2_1[ocm], w_b2_2[ocm], w_b1_1[ocm]+w_b1_2[ocm]+w_b2_1[ocm]+w_b2_2[ocm]))
+
+
+
+        ## OCM2, 1st Segment
+        ocm = 2
+        ax = plt.subplot(2,3,ocm+1)
+        draw_contour(ax, sub_sq_B1[ocm])
+        ax.set_title("OCM"+ str(ocm) + ", learning rate: " + str(learning_rate) + ", iteration: " + str(len(pos_history_B1)))
+        # Show points
+        for posB1 in pos_history_B1_2:
+            if is_valid(posB1[0]) and is_valid(posB1[1]):
+                ax.plot(posB1[0], posB1[1], 'o')
+        # Connect points with lines
+        for i in range(len(pos_history_B1_2) - 1):
+            x1 = pos_history_B1_2[i][0]
+            y1 = pos_history_B1_2[i][1]
+            x2 = pos_history_B1_2[i + 1][0]
+            y2 = pos_history_B1_2[i + 1][1]
+            if all([is_valid(v) for v in [x1, y1, x2, y2]]):
+                ax.plot([x1, x2], [y1, y2], linestyle='-', linewidth=2)
+
+        ## OCM2, 2nd Segment
+        ax = plt.subplot(2,3,ocm+4)
+        draw_contour(ax, sub_sq_B2[ocm])
+        ax.set_title("OCM"+ str(ocm) + ", learning rate: " + str(learning_rate) + ", iteration: " + str(len(pos_history_B2)))
+        # Show points
+        for posB2 in pos_history_B2_2:
+            if is_valid(posB2[0]) and is_valid(posB2[1]):
+                ax.plot(posB2[0], posB2[1], 'o')
+        # Connect points with lines
+        for i in range(len(pos_history_B2_2) - 1):
+            x1 = pos_history_B2_2[i][0]
+            y1 = pos_history_B2_2[i][1]
+            x2 = pos_history_B2_2[i + 1][0]
+            y2 = pos_history_B2_2[i + 1][1]
+            if all([is_valid(v) for v in [x1, y1, x2, y2]]):
+                ax.plot([x1, x2], [y1, y2], linestyle='-', linewidth=2)
+
+        # Save last point
+        w_b1_1[ocm] = posB1[0] * w_a1[ocm]
+        w_b1_2[ocm] = posB1[1] * w_a1[ocm]
+        w_b2_1[ocm] = posB2[0] * w_a2[ocm]
+        w_b2_2[ocm] = posB2[1] * w_a2[ocm]
+        print("OCM"+str(ocm)+": w_b1_1 = {:.4f}, w_b1_2 = {:.4f}, w_b2_1 = {:.4f}, w_b2_2 = {:.4f}, All = {:.4f}"
+              .format(w_b1_1[ocm], w_b1_2[ocm], w_b2_1[ocm], w_b2_2[ocm], w_b1_1[ocm]+w_b1_2[ocm]+w_b2_1[ocm]+w_b2_2[ocm]))
+
+
+
+        # タイトルが重ならないようにする
+        fig4.tight_layout()
+
+        # 画像を表示
+        plt.show()
+
+        # 画像を保存
+        fig4.savefig('2d-result_step2.png')
+
 
 
 print("End of code")
