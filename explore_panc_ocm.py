@@ -8,6 +8,9 @@ Created on Mon Nov  5 22:24:37 2018
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
+import time
+
+start = time.time()
 
 plt.close('all')
 
@@ -45,10 +48,10 @@ num_subject = 6  # This number has to be the number of total run (number of subj
 rep_list = [8196, 8196, 8196, 8192, 8192, 8192, 6932, 6932, 6932, 3690, 3690, 3690, 3401, 3401, 3401, 3690, 3690, 3690]# 3124 3401 3200
 
 # these store data for each transducer, 5 breath holds, 15 runs
-t0 = np.zeros([350,5,np.size(rep_list)])
-t1 = np.zeros([350,5,np.size(rep_list)])
-t2 = np.zeros([350,5,np.size(rep_list)])
-t3 = np.zeros([350,5,np.size(rep_list)])
+t0 = np.zeros([500,5,np.size(rep_list)])
+t1 = np.zeros([500,5,np.size(rep_list)])
+t2 = np.zeros([500,5,np.size(rep_list)])
+t3 = np.zeros([500,5,np.size(rep_list)])
 
 #stores mean squared difference
 d0 = np.zeros([5,np.size(rep_list)])
@@ -63,7 +66,7 @@ for fidx in range(0,np.size(rep_list)):
     
     
     #crop data
-    ocm = ocm[300:650,:] # Original code.
+    ocm = ocm[300:800,:] # Original code.
     #ocm = ocm[300+150:800,:] 
     #ocm = ocm[300:900,:] #600FOV
 
@@ -216,10 +219,10 @@ for fidx in range(0,np.size(rep_list)):
     ocm3m = np.ones([s,5])
     
     for i in range(0,5): #Distribute ocm signal from end to start
-        ocm0m[:,i] = np.mean(np.abs(ocm0[:,ocm0.shape[1]-rep_list[fidx]*(i+1)-1:ocm0.shape[1]-rep_list[fidx]*i-1]),1)
-        ocm1m[:,i] = np.mean(np.abs(ocm1[:,ocm1.shape[1]-rep_list[fidx]*(i+1)-1:ocm1.shape[1]-rep_list[fidx]*i-1]),1)
-        ocm2m[:,i] = np.mean(np.abs(ocm2[:,ocm2.shape[1]-rep_list[fidx]*(i+1)-1:ocm2.shape[1]-rep_list[fidx]*i-1]),1)
-        ocm3m[:,i] = np.mean(np.abs(ocm3[:,ocm3.shape[1]-rep_list[fidx]*(i+1)-1:ocm3.shape[1]-rep_list[fidx]*i-1]),1)
+        ocm0m[:,5-(i+1)] = np.mean(np.abs(ocm0[:,ocm0.shape[1]-rep_list[fidx]*(i+1)-1:ocm0.shape[1]-rep_list[fidx]*i-1]),1)
+        ocm1m[:,5-(i+1)] = np.mean(np.abs(ocm1[:,ocm1.shape[1]-rep_list[fidx]*(i+1)-1:ocm1.shape[1]-rep_list[fidx]*i-1]),1)
+        ocm2m[:,5-(i+1)] = np.mean(np.abs(ocm2[:,ocm2.shape[1]-rep_list[fidx]*(i+1)-1:ocm2.shape[1]-rep_list[fidx]*i-1]),1)
+        ocm3m[:,5-(i+1)] = np.mean(np.abs(ocm3[:,ocm3.shape[1]-rep_list[fidx]*(i+1)-1:ocm3.shape[1]-rep_list[fidx]*i-1]),1)
     
     
     #collect all the data so far
@@ -293,3 +296,5 @@ np.savetxt(out_txt[0],d0,fmt='%0.08f',delimiter=' ',newline='\n')
 np.savetxt(out_txt[1],d1,fmt='%0.08f',delimiter=' ',newline='\n')
 np.savetxt(out_txt[2],d2,fmt='%0.08f',delimiter=' ',newline='\n')
 np.savetxt(out_txt[3],d3,fmt='%0.08f',delimiter=' ',newline='\n')
+
+print(time.time() - start)
