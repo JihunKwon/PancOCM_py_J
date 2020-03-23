@@ -147,6 +147,7 @@ for fidx in range(0,np.size(rep_list)):
         lptr_env_my[:, p] = np.convolve(np.sqrt(np.square(tr2)), f2_my, 'same')
         # Some kind of normalization here
         lptr_norm[:,p] = np.divide(lptr_env_my[:,p],np.max(lptr_env_my[:,p]))
+        '''
 
 
         # ========================Visualize==============================================
@@ -167,7 +168,7 @@ for fidx in range(0,np.size(rep_list)):
         fig.tight_layout()
         plt.savefig('Filtered_wave_my.png')
         # =============================================================================
-        '''
+
 
 
 #    for p in range(0,t):
@@ -233,7 +234,7 @@ for fidx in range(0,np.size(rep_list)):
     
     
 sample_rate_MHz = 10
-us_per_sample = 1/sample_rate_MHz
+us_per_sample = 1/sample_rate_MHz  # microsecond
 
 #in cm
 little_t = np.linspace(2.3,6.2,s)

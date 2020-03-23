@@ -16,11 +16,11 @@ ocm_list = [] #run2
 ocm_list = [] #run3
 ocm_list = [] #test1
 
-#ocm_list.append("C:\\OCM_Data\\Panc_OCM\\Subject_01_20180928\\run1.bin")
-#ocm_list.append("C:\\OCM_Data\\Panc_OCM\\Subject_01_20181102\\runb2.bin")
-#ocm_list.append("C:\\OCM_Data\\Panc_OCM\\Subject_02_20181102\\run2.bin")
-#ocm_list.append("C:\\OCM_Data\\Panc_OCM\\Subject_02_20181220\\run2_ocm.bin")
-ocm_list.append("C:\\Users\\Kwon\\Documents\\Panc_OCM\\Subject_03_20190320\\run1.bin")
+#ocm_list.append("C:\\Users\\Kwon\\Documents\\Panc_OCM\\Subject_01_20180928\\run1.bin")
+#ocm_list.append("C:\\Users\\Kwon\\Documents\\Panc_OCM\\Subject_01_20181102\\runb2.bin")
+#ocm_list.append("C:\\Users\\Kwon\\Documents\\Panc_OCM\\Subject_02_20181102\\run2.bin")
+ocm_list.append("C:\\Users\\Kwon\\Documents\\Panc_OCM\\Subject_02_20181220\\run2_ocm.bin")
+#ocm_list.append("C:\\Users\\Kwon\\Documents\\Panc_OCM\\Subject_03_20190320\\run1.bin")
 
 
 fidx = 0
@@ -28,7 +28,7 @@ ocm_filename = ocm_list[0]
 a = ocm_exp.ocm_exp(ocm_filename)
 
 sec_per_trace = (a.ts2_us[0,1] - a.ts2_us[0,0]) #ts2_us (float array): NI timestamp
-
+trace_per_sec = 1./sec_per_trace
 #in seconds
 big_t = np.multiply(range(0,a.cnt),sec_per_trace) #cnt:num of full traces in the file
 #big_t = 1*16621. max is 41.12
